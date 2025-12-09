@@ -1,0 +1,14 @@
+.idea
+.venv
+data
+__pycache__
+backend/static
+backend/media
+letsencrypt
+webroot
+ssl
+
+.env
+backend/db.sqlite3
+README.md
+.github

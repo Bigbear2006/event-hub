@@ -1,0 +1,67 @@
+@use 'variables';
+@use 'registration';
+@use 'events-list';
+@use 'event';
+
+* {
+  font-family: Inter, system-ui;
+  font-weight: 600;
+  font-size: 14px;
+  color: variables.$secondary-color;
+}
+
+html,
+body,
+#root {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: variables.$primary-color;
+  box-sizing: border-box;
+  margin: 0;
+  color-scheme: only dark;
+}
+
+#root {
+  padding: 20px;
+}
+
+p {
+  margin: 0;
+  color: variables.$secondary-color;
+}
+
+input[type='text'] {
+  color: variables.$secondary-color;
+  border: none;
+  border-radius: 10px;
+  background-color: variables.$placeholder-color;
+  padding: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 300px;
+  font-size: 14px;
+
+  &::placeholder {
+    color: variables.$secondary-color;
+    font-weight: 400;
+  }
+}
+
+button:not(.Toastify__close-button) {
+  color: variables.$secondary-color;
+  background-color: variables.$button-color;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 24px;
+  text-align: center;
+  letter-spacing: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}

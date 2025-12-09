@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:17.4
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./backend/static:/var/www/static
+      - ./backend/media:/var/www/media
+      - ./build:/var/www/build
+      - ./nginx/letsencrypt:/etc/letsencrypt
+      - ./nginx/webroot:/var/www/certbot
+      - ./nginx/ssl:/etc/ssl
+    depends_on:
+      - backend
+
+  certbot:
+    image: certbot/certbot:v3.2.0
+    volumes:
+      - ./nginx/letsencrypt:/etc/letsencrypt
+      - ./nginx/webroot:/var/www/certbot
+    depends_on:
+      - nginx

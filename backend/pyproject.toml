@@ -1,0 +1,60 @@
+[project]
+name = "event-hub"
+version = "0.1.0"
+description =  ""
+requires-python = ">=3.13"
+dependencies = [
+    "django>=6.0",
+    "django-cleanup>=9.0.0",
+    "django-cors-headers>=4.9.0",
+    "django-storages[s3]>=1.14.6",
+    "django-stubs>=5.2.8",
+    "djangorestframework>=3.16.1",
+    "djangorestframework-simplejwt>=5.5.1",
+    "djangorestframework-stubs[compatible-mypy]>=3.16.6",
+    "drf-yasg>=1.21.11",
+    "gunicorn>=23.0.0",
+    "pillow>=12.0.0",
+    "psycopg2>=2.9.11",
+    "python-dotenv>=1.2.1",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.0",
+    "ruff>=0.14.8",
+]
+
+[tool.ruff]
+line-length = 79
+target-version = "py311"
+src = ["."]
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "COM812",  # trailing comma
+    "RUF022"  # sort __all__
+]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+disable_error_code = ["union-attr", "var-annotated"]
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "backend.settings"
