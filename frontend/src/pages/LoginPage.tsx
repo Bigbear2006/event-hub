@@ -44,6 +44,8 @@ export const LoginPage = () => {
       >
         Войти
       </button>
+      <a href="/forgot-password">Забыли пароль?</a>
+      <a href="/admin">Войти как администратор</a>
     </div>
   );
 };

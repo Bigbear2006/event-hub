@@ -4,12 +4,33 @@ from api.models import Event, EventParticipation
 
 
 class EventSerializer(serializers.ModelSerializer[Event]):
+    participants_count = serializers.SerializerMethodField()
+    is_active = serializers.SerializerMethodField()
+
+    def get_participants_count(self, obj: Event) -> int:
+        return obj.participants_count  # type: ignore
+
+    def get_is_active(self, obj: Event) -> bool:
+        return obj.is_active()
+
     class Meta:
         model = Event
-        fields = '__all__'
+        fields = (
+            'id',
+            'title',
+            'image',
+            'short_description',
+            'full_description',
+            'start_date',
+            'end_date',
+            'payment_info',
+            'participants_count',
+            'max_participants_count',
+            'is_active',
+        )
 
 
-class DetailEventSerializer(serializers.ModelSerializer[Event]):
+class DetailEventSerializer(EventSerializer):
     user_participated = serializers.SerializerMethodField()
 
     def get_user_participated(self, obj: Event) -> bool:
@@ -30,6 +51,8 @@ class DetailEventSerializer(serializers.ModelSerializer[Event]):
             'start_date',
             'end_date',
             'payment_info',
+            'participants_count',
             'max_participants_count',
             'user_participated',
+            'is_active',
         )

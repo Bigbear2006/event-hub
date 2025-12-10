@@ -7,9 +7,13 @@ export interface RegisterUserData {
   repeat_password: string;
 }
 
+export interface RegisterUserResponse {
+  id: number;
+}
+
 export const registerUser = (data: RegisterUserData) => {
   return axiosInstance
-    .post('api/auth/user/register/', {
+    .post<RegisterUserResponse>('api/auth/user/register/', {
       username: data.fullname,
       email: data.email,
       password: data.password,
@@ -41,6 +45,19 @@ export const loginUser = async (data: LoginUserData) => {
     });
 };
 
+export interface VerifyCodeData {
+  user_id: number;
+  code: number;
+}
+
+export const verifyCode = (data: VerifyCodeData) => {
+  return axiosInstance.post('api/auth/user/verify-code/', data);
+};
+
+export const loginAsAdmin = () => {
+  return axiosInstance.post('api/auth/user/login-as-admin/');
+};
+
 interface RefreshAccessTokenResponse {
   access: string;
 }
@@ -51,4 +68,26 @@ export const refreshAccessToken = () => {
       refresh: localStorage.getItem('refresh'),
     })
     .then(rsp => localStorage.setItem('access', rsp.data.access));
+};
+
+export interface ForgotPasswordData {
+  email: string;
+}
+
+export const forgotPassword = (data: ForgotPasswordData) => {
+  return axiosInstance.post('api/auth/user/forgot-password/', data);
+};
+
+export interface ResetPasswordData {
+  userId: number;
+  token: string;
+  password: string;
+}
+
+export const resetPassword = (data: ResetPasswordData) => {
+  return axiosInstance.post(
+    'api/auth/user/reset-password/',
+    { password: data.password },
+    { params: { user_id: data.userId, token: data.token } },
+  );
 };

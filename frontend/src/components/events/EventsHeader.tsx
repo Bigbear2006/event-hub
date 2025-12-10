@@ -7,7 +7,7 @@ export const EventsHeader = () => {
     { title: 'Мои события', path: '/events/my' },
     { title: 'Прошедшие события', path: '/events/past' },
   ];
-  const [currentItem, setCurrentItem] = useState<number>(0);
+  const [currentItem, setCurrentItem] = useState<number>(1);
   const navigate = useNavigate();
 
   return (

@@ -16,9 +16,19 @@ urlpatterns = [
         name='register-user',
     ),
     path(
-        'user/verify-email/',
-        views.VerifyEmailAPIView.as_view(),
-        name='verify-email',
+        'user/verify-code/',
+        views.VerifyCodeAPIView.as_view(),
+        name='verify-code',
     ),
     path('user/info/', views.UserInfoAPIView.as_view(), name='user-info'),
+    path(
+        'user/forgot-password/',
+        views.ForgotPasswordAPIView.as_view(),
+        name='forgot-password',
+    ),
+    path(
+        'user/reset-password/',
+        views.ResetPasswordAPIView.as_view(),
+        name='reset-password',
+    ),
 ]

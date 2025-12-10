@@ -12,3 +12,4 @@ ssl
 backend/db.sqlite3
 README.md
 .github
+build

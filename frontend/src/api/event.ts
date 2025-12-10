@@ -9,8 +9,10 @@ interface EventResponse {
   start_date: string;
   end_date: string;
   payment_info: string;
+  participants_count: number;
   max_participants_count?: number;
   user_participated?: boolean;
+  is_active: boolean;
 }
 
 export interface Event {
@@ -22,8 +24,10 @@ export interface Event {
   startDate: Date;
   endDate: Date;
   paymentInfo: string;
+  participantsCount: number;
   maxParticipantsCount?: number;
   userParticipated?: boolean;
+  isActive: boolean;
 }
 
 const mapEvent = (event: EventResponse): Event => {
@@ -36,8 +40,10 @@ const mapEvent = (event: EventResponse): Event => {
     startDate: new Date(event.start_date),
     endDate: new Date(event.end_date),
     paymentInfo: event.payment_info,
+    participantsCount: event.participants_count,
     maxParticipantsCount: event.max_participants_count,
     userParticipated: event.user_participated,
+    isActive: event.is_active,
   };
 };
 

@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core import validators
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.timezone import now
 
 
 class Event(models.Model):
@@ -20,6 +22,7 @@ class Event(models.Model):
         null=True,
         blank=True,
     )
+    is_cancelled = models.BooleanField('Отменено', default=False)
 
     class Meta:
         verbose_name = 'Событие'
@@ -27,6 +30,34 @@ class Event(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def is_active(self) -> bool:
+        return self.start_date <= now() <= self.end_date
+
+    def clean(self) -> None:
+        super().clean()
+        today = now()
+
+        if not self.pk and self.start_date < today:
+            raise ValidationError(
+                {
+                    'start_date': 'Дата начала должна быть позже '
+                    'сегодняшней даты',
+                },
+            )
+
+        if not self.pk and self.end_date < today:
+            raise ValidationError(
+                {
+                    'end_date': 'Дата окончания должна быть позже '
+                    'сегодняшней даты',
+                },
+            )
+
+        if self.start_date >= self.end_date:
+            raise ValidationError(
+                {'end_date': 'Дата окончания должна быть позже даты начала'},
+            )
 
 
 class EventParticipation(models.Model):

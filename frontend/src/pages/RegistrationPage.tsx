@@ -24,6 +24,10 @@ export const RegistrationPage = () => {
             required: 'Обязательное поле',
             minLength: { value: 5, message: 'Минимум 5 символов' },
             maxLength: { value: 50, message: 'Максимум 50 символов' },
+            pattern: {
+              value: /^[А-Яа-яЁё\s-]+$/,
+              message: 'ФИО должно содержать только русские буквы',
+            },
           })}
         />
         {errors.fullname && <p className="error">{errors.fullname.message}</p>}
@@ -46,7 +50,18 @@ export const RegistrationPage = () => {
         <input
           type="text"
           placeholder="Пароль"
-          {...register('password', { required: 'Обязательное поле' })}
+          {...register('password', {
+            required: 'Обязательное поле',
+            minLength: {
+              value: 8,
+              message: 'Минимум 8 символов',
+            },
+            pattern: {
+              value: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).{8,}$/,
+              message:
+                'Пароль должен содержать латинские буквы, цифры и символы',
+            },
+          })}
         />
         {errors.password && <p className="error">{errors.password.message}</p>}
       </div>
@@ -67,10 +82,10 @@ export const RegistrationPage = () => {
       <button
         onClick={handleSubmit(data =>
           registerUser(data).then(
-            () => {
-              navigate('/login');
+            rsp => {
+              navigate(`/verify-code/?user_id=${rsp.data.id}`);
               toast.info(
-                'Письмо с подтверждением регистрации отправлено на почту. Обязательно проверьте папку спам',
+                'Письмо с кодом подтверждением регистрации отправлено на почту. Обязательно проверьте папку спам',
               );
             },
             () =>
@@ -82,6 +97,7 @@ export const RegistrationPage = () => {
       >
         Зарегистрироваться
       </button>
+      <a href="/login">Уже есть аккаунт</a>
     </div>
   );
 };

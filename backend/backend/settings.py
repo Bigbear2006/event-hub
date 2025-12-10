@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_cleanup',
     'drf_yasg',
+    'rangefilter',
+    'django_redis',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +92,16 @@ DATABASES = {
     },
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://redis:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': os.getenv('REDIS_PASSWORD'),
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -245,4 +257,4 @@ DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
-VERIFY_EMAIL_URL = os.getenv('VERIFY_EMAIL_URL')
+FORGOT_PASSWORD_URL = os.getenv('FORGOT_PASSWORD_URL')

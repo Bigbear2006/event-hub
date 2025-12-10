@@ -6,6 +6,12 @@ import {
 } from '../api/event.ts';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import {
+  formatDate,
+  getEventParticipantsCountText,
+  getEventStatusText,
+} from '../format.ts';
+import { toast } from 'react-toastify';
 
 export const EventPage = () => {
   const [event, setEvent] = useState<Event>({
@@ -17,7 +23,10 @@ export const EventPage = () => {
     startDate: new Date(),
     endDate: new Date(),
     paymentInfo: '',
+    participantsCount: 0,
+    isActive: false,
   });
+  const [open, setOpen] = useState(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -35,21 +44,68 @@ export const EventPage = () => {
       </div>
       <div className="event__body">
         <img src={event.image} alt="" />
-        <p>{event.fullDescription}</p>
+        <div>
+          <p>Описание</p>
+          <p>{event.fullDescription}</p>
+        </div>
       </div>
-      {event.userParticipated && (
-        <button onClick={() => {
-          cancelEventParticipation(event.id).then(() => getEvent(event.id, setEvent))
-        }}>
-          Отменить участие в событии
+      <p>Информация об оплате: {event.paymentInfo}</p>
+      <p>
+        Мероприятие проводится с {formatDate(event.startDate)} по{' '}
+        {formatDate(event.endDate)}
+      </p>
+      <p>
+        {event.userParticipated
+          ? 'Вы участвуете в этом мероприятии'
+          : 'Вы не участвуете в этом мероприятии'}
+      </p>
+      <p>{getEventParticipantsCountText(event)}</p>
+      <p>Статус: {getEventStatusText(event)}</p>
+      {event.isActive && event.userParticipated && (
+        <button
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          Отменить участие
         </button>
       )}
-      {!event.userParticipated && (
-        <button onClick={() => {
-          participateInEvent(event.id).then(() => getEvent(event.id, setEvent))
-        }}>
-          Принять участие в событии
+      {event.isActive && !event.userParticipated && (
+        <button
+          onClick={() => {
+            participateInEvent(event.id).then(
+              () => getEvent(event.id, setEvent),
+              () => toast.error('Достигнут максимальный лимит участников'),
+            );
+          }}
+        >
+          Подтвердить участие
         </button>
+      )}
+      {open && (
+        <div className="event__modal-overlay">
+          <div className="event__modal">
+            <p>Вы уверены, что хотите отменить участие?</p>
+            <div className="event__modal-actions">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  cancelEventParticipation(event.id).then(() =>
+                    getEvent(event.id, setEvent),
+                  );
+                }}
+              >
+                Подтвердить
+              </button>
+              <button
+                className="event__confirm-cancel"
+                onClick={() => setOpen(false)}
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
