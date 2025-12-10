@@ -51,7 +51,11 @@ export interface VerifyCodeData {
 }
 
 export const sendVerificationCode = (userId: number) => {
-  return axiosInstance.post(`api/auth/user/send-verification-code/`, {}, {params: {user_id: userId}});
+  return axiosInstance.post(
+    `api/auth/user/send-verification-code/`,
+    {},
+    { params: { user_id: userId } },
+  );
 };
 
 export const verifyCode = (data: VerifyCodeData) => {

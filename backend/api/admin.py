@@ -2,11 +2,15 @@ from typing import Any, cast
 
 from django.contrib import admin
 from django.db.models import ForeignKey, QuerySet
-from django.forms.models import ModelChoiceField
+from django.forms.models import ModelChoiceField, ModelForm
 from django.http import HttpRequest
 
+from api.filters import EventStatusFilter
 from api.models import Event, EventParticipation, Feedback
-from api.services import notify_user_about_event
+from api.services import (
+    notify_user_about_event,
+    notify_user_about_updated_event,
+)
 from jwt_auth.models import User
 
 
@@ -36,6 +40,7 @@ class EventAdmin(admin.ModelAdmin[Event]):
     exclude = ('created_by',)
     search_fields = ('title', 'short_description', 'full_description')
     search_help_text = 'Поиск по названию, краткому и полному описанию'
+    list_filter = (EventStatusFilter,)
     inlines = (EventParticipationInline,)
     actions = ('cancel',)
 
@@ -51,12 +56,25 @@ class EventAdmin(admin.ModelAdmin[Event]):
         self,
         request: HttpRequest,
         obj: Event,
-        form: Any,
+        form: ModelForm[Event],
         change: bool,
     ) -> None:
         if not change and not obj.created_by:
             obj.created_by = cast(User, request.user)
         super().save_model(request, obj, form, change)
+
+        if change and any(
+            i in form.changed_data
+            for i in (
+                'start_date',
+                'end_date',
+                'short_description',
+                'full_description',
+                'payment_info',
+            )
+        ):
+            for user in User.objects.filter(is_active=True, events__event=obj):
+                notify_user_about_updated_event.delay(obj.pk, user.pk)
 
     def save_related(
         self,
@@ -72,7 +90,7 @@ class EventAdmin(admin.ModelAdmin[Event]):
                 return
             for new_obj in formset.new_objects:
                 if isinstance(new_obj, EventParticipation):
-                    notify_user_about_event(event.pk, new_obj.user.pk)
+                    notify_user_about_event.delay(event.pk, new_obj.user.pk)
 
 
 @admin.register(Feedback)

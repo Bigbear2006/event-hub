@@ -46,11 +46,25 @@ class Event(models.Model):
         super().clean()
         today = now()
 
-        if not self.pk and self.start_date < today:
+        # if not self.pk and self.start_date < today:
+        #     raise ValidationError(
+        #         {
+        #             'start_date': 'Дата начала должна быть позже '
+        #             'сегодняшней даты',
+        #         },
+        #     )
+
+        if (
+            self.pk
+            and self.max_participants_count is not None
+            and self.users.count() > self.max_participants_count
+        ):
             raise ValidationError(
                 {
-                    'start_date': 'Дата начала должна быть позже '
-                    'сегодняшней даты',
+                    'max_participants_count': (
+                        'Количество участников этого события '
+                        'превышает максимальное'
+                    ),
                 },
             )
 
@@ -66,6 +80,16 @@ class Event(models.Model):
             raise ValidationError(
                 {'end_date': 'Дата окончания должна быть позже даты начала'},
             )
+
+    @property
+    def message_text(self) -> str:
+        return (
+            f'Краткое описание: {self.short_description}\n<br/>'
+            f'Описание: {self.full_description}\n<br/>'
+            f'Информация об оплате: {self.payment_info}\n<br/>'
+            f'Дата начала: {self.start_date:%d.%m.%Y %H:%M:%S}\n<br/>'
+            f'Дата окончания: {self.end_date:%d.%m.%Y %H:%M:%S}\n<br/>'
+        )
 
 
 class EventParticipation(models.Model):

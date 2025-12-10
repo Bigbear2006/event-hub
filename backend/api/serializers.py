@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Event, EventParticipation
+from api.models import Event, EventParticipation, Feedback
 
 
 class EventSerializer(serializers.ModelSerializer[Event]):
@@ -56,3 +56,9 @@ class DetailEventSerializer(EventSerializer):
             'user_participated',
             'is_active',
         )
+
+
+class CreateFeedbackSerializer(serializers.ModelSerializer[Feedback]):
+    class Meta:
+        model = Feedback
+        fields = ('text', 'rating')

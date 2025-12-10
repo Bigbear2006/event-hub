@@ -6,6 +6,7 @@ from django.db.models.aggregates import Count
 from django.utils.timezone import now
 from rest_framework import status
 from rest_framework.generics import (
+    GenericAPIView,
     ListAPIView,
     RetrieveAPIView,
     get_object_or_404,
@@ -15,8 +16,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from api.models import Event, EventParticipation
-from api.serializers import DetailEventSerializer, EventSerializer
+from api.models import Event, EventParticipation, Feedback
+from api.serializers import (
+    CreateFeedbackSerializer,
+    DetailEventSerializer,
+    EventSerializer,
+)
 from api.services import (
     send_user_cancelled_participation_email,
     send_user_participated_email,
@@ -67,7 +72,7 @@ class EventParticipationAPIView(APIView):
         )
         if (
             event.max_participants_count is not None
-            and event.participants_count >= event.max_participants_count
+            and event.participants_count >= event.max_participants_count  # type: ignore
         ):
             return Response(
                 {'error': 'too many participants'},
@@ -106,8 +111,29 @@ class EventParticipationAPIView(APIView):
         if queryset.exists():
             send_user_cancelled_participation_email.delay(
                 event.pk,
-                request.user.pk,
+                request.user.pk,  # type: ignore
             )
 
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class CreateFeedbackAPIView(GenericAPIView[Feedback]):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreateFeedbackSerializer
+
+    def post(self, request: Request, pk: int) -> Response:
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        participation = get_object_or_404(
+            EventParticipation.objects,
+            event_id=pk,
+            user=request.user,
+        )
+        Feedback.objects.create(
+            participation=participation,
+            text=data['text'],
+            rating=data['rating'],
+        )
+        return Response(status=status.HTTP_201_CREATED)

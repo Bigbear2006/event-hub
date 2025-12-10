@@ -14,4 +14,9 @@ urlpatterns = [
         views.EventParticipationAPIView.as_view(),
         name='event-participation',
     ),
+    path(
+        'events/<int:pk>/feedback/',
+        views.CreateFeedbackAPIView.as_view(),
+        name='create-feedback',
+    ),
 ]

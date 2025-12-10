@@ -9,6 +9,7 @@ import { ForgotPasswordPage } from './pages/ForgotPasswordPage.tsx';
 import { ResetPasswordPage } from './pages/ResetPasswordPage.tsx';
 import { VerifyCodePage } from './pages/VerifyCodePage.tsx';
 import { Theme } from './components/Theme.tsx';
+import { CreateFeedbackPage } from './pages/CreateFeedbackPage.tsx';
 
 export const App = () => {
   return (
@@ -21,6 +22,10 @@ export const App = () => {
           <Route path="login/" element={<LoginPage />} />
           <Route path="events/:eventType" element={<EventsListPage />} />
           <Route path="event/:id" element={<EventPage />} />
+          <Route
+            path="event/:eventId/feedback/create/"
+            element={<CreateFeedbackPage />}
+          />
           <Route path="forgot-password/" element={<ForgotPasswordPage />} />
           <Route path="reset-password/" element={<ResetPasswordPage />} />
         </Routes>

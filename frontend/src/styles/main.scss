@@ -3,6 +3,7 @@
 @use 'events-list';
 @use 'event';
 @use 'theme';
+@use 'feedback';
 
 * {
   font-family: Inter, system-ui;
@@ -33,7 +34,8 @@ p {
 }
 
 input[type='text'],
-input[type='password'] {
+input[type='password'],
+textarea {
   color: variables.$secondary-color;
   border: none;
   border-radius: 10px;
@@ -47,6 +49,21 @@ input[type='password'] {
   &::placeholder {
     color: variables.$secondary-color;
     font-weight: 400;
+  }
+}
+
+select {
+  border: none;
+  border-radius: 10px;
+  background-color: #b0c9ff4d;
+  padding: 16px;
+  width: 100%;
+  font-size: 14px;
+  appearance: none;
+
+  option {
+    background-color: variables.$primary-color;
+    color: variables.$secondary-color;
   }
 }
 
