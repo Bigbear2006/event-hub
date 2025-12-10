@@ -16,6 +16,10 @@ from rest_framework.views import APIView
 
 from api.models import Event, EventParticipation
 from api.serializers import DetailEventSerializer, EventSerializer
+from api.services import (
+    send_user_cancelled_participation_email,
+    send_user_participated_email,
+)
 from jwt_auth.models import User
 
 
@@ -69,16 +73,23 @@ class EventParticipationAPIView(APIView):
                 status.HTTP_400_BAD_REQUEST,
             )
 
-        EventParticipation.objects.get_or_create(
+        _, created = EventParticipation.objects.get_or_create(
             event=event,
             user=request.user,
         )
+        if created:
+            send_user_participated_email(event, request.user)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request: Request, pk: int) -> Response:
         event = get_object_or_404(Event, pk=pk)
-        EventParticipation.objects.filter(
+        queryset = EventParticipation.objects.filter(
             event=event,
             user=cast(User, request.user),
-        ).delete()
+        )
+
+        if queryset.exists():
+            send_user_cancelled_participation_email(event, request.user)
+
+        queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

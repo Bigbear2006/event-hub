@@ -23,6 +23,14 @@ class Event(models.Model):
         blank=True,
     )
     is_cancelled = models.BooleanField('Отменено', default=False)
+    created_by = models.ForeignKey(
+        get_user_model(),
+        models.SET_NULL,
+        'created_events',
+        null=True,
+        blank=True,
+        verbose_name='Создал',
+    )
 
     class Meta:
         verbose_name = 'Событие'

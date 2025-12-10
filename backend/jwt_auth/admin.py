@@ -35,6 +35,7 @@ class UserAdmin(admin.ModelAdmin[User]):
     search_fields = ('username', 'email')
     search_help_text = 'Поиск по ФИО и почте'
     ordering = ('-date_joined',)
+    actions = ('mark_as_inactive',)
 
     @admin.action(description='Пометить как удаленных')
     def mark_as_inactive(

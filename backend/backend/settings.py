@@ -22,6 +22,8 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS').split(',')
 
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(',')
 
+BASE_URL = os.getenv('BASE_URL')
+
 
 # Application definition
 
@@ -256,5 +258,3 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-
-FORGOT_PASSWORD_URL = os.getenv('FORGOT_PASSWORD_URL')

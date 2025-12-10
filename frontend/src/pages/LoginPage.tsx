@@ -37,7 +37,7 @@ export const LoginPage = () => {
       <button
         onClick={handleSubmit(data =>
           loginUser(data).then(
-            () => navigate('/events/active/'),
+            () => navigate('/events/my/'),
             () => toast.error('Проверьте, что ввели верные почту и пароль'),
           ),
         )}

@@ -15,13 +15,19 @@ def send_verification_code_email(user: User) -> None:
 
 
 def send_success_registration_email(user: User) -> None:
-    msg = 'Поздравляем, вы успешно зарегистрировались в на нашем сайте!'
+    msg = (
+        f'Поздравляем, вы успешно зарегистрировались в на нашем сайте!\n\n'
+        f'<a href="{settings.BASE_URL}">{settings.BASE_URL}</a>'
+    )
     user.email_user('Успешная регистрация', '', html_message=msg)
 
 
 def send_forgot_password_email(user: User) -> None:
     token = default_token_generator.make_token(user)
-    url = f'{settings.FORGOT_PASSWORD_URL}?user_id={user.pk}&token={token}'
+    url = (
+        f'{settings.BASE_URL}api/auth/user/forgot-password/'
+        f'?user_id={user.pk}&token={token}'
+    )
     msg = (
         f'Перейдите по ссылке и создайте новый пароль: '
         f'<a href="{url}">{url}</a>'
