@@ -1,9 +1,13 @@
+import csv
+import io
 from typing import Any, cast
 
 from django.contrib import admin
-from django.db.models import ForeignKey, QuerySet
+from django.db.models import ForeignKey, QuerySet, Subquery
 from django.forms.models import ModelChoiceField, ModelForm
-from django.http import HttpRequest
+from django.http import HttpRequest, HttpResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font
 
 from api.filters import EventStatusFilter
 from api.models import Event, EventParticipation, Feedback
@@ -42,7 +46,7 @@ class EventAdmin(admin.ModelAdmin[Event]):
     search_help_text = 'Поиск по названию, краткому и полному описанию'
     list_filter = (EventStatusFilter,)
     inlines = (EventParticipationInline,)
-    actions = ('cancel',)
+    actions = ('cancel', 'export_to_csv', 'export_to_excel')
 
     @admin.action(description='Отменить')
     def cancel(
@@ -92,18 +96,93 @@ class EventAdmin(admin.ModelAdmin[Event]):
                 if isinstance(new_obj, EventParticipation):
                     notify_user_about_event.delay(event.pk, new_obj.user.pk)
 
+    @admin.action(description='Выгрузить пользователей в CSV')
+    def export_to_csv(
+        self,
+        request: HttpRequest,
+        queryset: QuerySet[Event],
+    ) -> HttpResponse:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=users.csv'
+
+        response.write('\ufeff')
+        wrapper = io.TextIOWrapper(response, encoding='utf-8', newline='')  # type: ignore
+        writer = csv.writer(wrapper)
+        writer.writerow(
+            ['ID', 'ФИО', 'Email', 'Админ', 'Дата создания', 'Активен'],
+        )
+
+        for user in User.objects.filter(
+            events__event__in=Subquery(queryset.values('id')),
+            is_active=True,
+        ):
+            writer.writerow(
+                [
+                    user.id,
+                    user.username,
+                    user.email,
+                    'Да' if user.is_staff else 'Нет',
+                    user.date_joined.strftime('%d.%m.%Y %H:%M:%S'),
+                    'Да' if user.is_active else 'Нет',
+                ],
+            )
+
+        return response
+
+    @admin.action(description='Выгрузить пользователей в XlSX')
+    def export_to_excel(
+        self,
+        request: HttpRequest,
+        queryset: QuerySet[Event],
+    ) -> HttpResponse:
+        wb = Workbook()
+        ws = wb.active
+        ws.title = 'Пользователи'
+
+        headers = ['ID', 'ФИО', 'Email', 'Админ', 'Дата создания', 'Активен']
+        ws.append(headers)
+
+        for user in User.objects.filter(
+            events__event__in=Subquery(queryset.values('id')),
+            is_active=True,
+        ):
+            ws.append(
+                [
+                    user.id,
+                    user.username,
+                    user.email,
+                    user.is_staff,
+                    user.date_joined.strftime('%d.%m.%Y %H:%M:%S'),
+                    user.is_active,
+                ],
+            )
+
+        for cell in ws[1]:  # type: ignore
+            cell.font = Font(bold=True)
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=users.xlsx'
+
+        wb.save(response)
+        return response
+
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin[Feedback]):
-    list_display = (
-        '__str__',
-        'rating',
-        'participation__event',
-        'participation__user',
-    )
+    list_display = ('__str__', 'rating', 'event', 'user')
     list_filter = ('rating', 'participation__event')
     search_fields = ('text',)
     search_help_text = 'Поиск по тексту'
     list_select_related = ('participation__event', 'participation__user')
     ordering = ('-created_at',)
     readonly_fields = ('participation', 'text', 'rating', 'created_at')
+
+    @admin.display(description='Событие')
+    def event(self, obj: Feedback) -> str:
+        return str(obj.participation.event)
+
+    @admin.display(description='Пользователь')
+    def user(self, obj: Feedback) -> str:
+        return str(obj.participation.user)
