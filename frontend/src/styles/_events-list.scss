@@ -14,6 +14,7 @@
   .events-header {
     display: flex;
     gap: 30px;
+    justify-content: space-between;
 
     p {
       font-size: 18px;
@@ -45,5 +46,11 @@
       position: absolute;
       object-fit: cover;
     }
+  }
+}
+
+[data-theme='light'] {
+  .event-card p {
+    color: variables.$primary-color;
   }
 }

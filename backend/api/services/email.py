@@ -1,10 +1,13 @@
 from django.conf import settings
 
 from api.models import Event
+from backend.celery import app
 from jwt_auth.models import User
 
-
-def send_user_participated_email(event: Event, user: User) -> None:
+@app.task
+def send_user_participated_email(event_id: int, user_id: int) -> None:
+    event = Event.objects.get(id=event_id)
+    user = User.objects.get(id=user_id)
     if not event.created_by:
         return
     msg = f'Пользователь {user} принял участие в событии {event}'
@@ -14,8 +17,10 @@ def send_user_participated_email(event: Event, user: User) -> None:
         html_message=msg,
     )
 
-
-def send_user_cancelled_participation_email(event: Event, user: User) -> None:
+@app.task
+def send_user_cancelled_participation_email(event_id: int, user_id: int) -> None:
+    event = Event.objects.get(id=event_id)
+    user = User.objects.get(id=user_id)
     if not event.created_by:
         return
     msg = f'Пользователь {user} отменил участие в событии {event}'
@@ -25,8 +30,10 @@ def send_user_cancelled_participation_email(event: Event, user: User) -> None:
         html_message=msg,
     )
 
-
-def notify_user_about_event(event: Event, user: User) -> None:
+@app.task
+def notify_user_about_event(event_id: int, user_id: int) -> None:
+    event = Event.objects.get(id=event_id)
+    user = User.objects.get(id=user_id)
     message = (
         f'Здравствуйте, {user}!\n\n'
         f'Администратор добавил вас в участники события {event.title}.\n'

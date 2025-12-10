@@ -28,7 +28,7 @@ export const LoginPage = () => {
       </div>
       <div className="registration__form-field">
         <input
-          type="text"
+          type="password"
           placeholder="Пароль"
           {...register('password', { required: 'Обязательное поле' })}
         />

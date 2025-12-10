@@ -15,6 +15,11 @@
     position: absolute;
     top: 20px;
     left: 20px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: variables.$card-color;
   }
 
   &__title p {

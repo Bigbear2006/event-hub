@@ -14,4 +14,4 @@ def send_mail_after_create_user(
     **kwargs: Any,
 ) -> None:
     if created and not instance.is_active:
-        send_verification_code_email(instance)
+        send_verification_code_email.delay(instance.pk)

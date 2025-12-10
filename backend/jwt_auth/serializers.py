@@ -23,16 +23,6 @@ class UserSerializer(serializers.ModelSerializer[User]):
 
     def create(self, validated_data: Any) -> User:
         validated_data['is_active'] = False
-
-        try:
-            user = User.objects.get(
-                email=validated_data['email'],
-                is_active=False,
-            )
-            user.delete()
-        except User.DoesNotExist:
-            pass
-
         return User.objects.create_user(
             username=validated_data.pop('username', None),
             email=validated_data.pop('email', None),

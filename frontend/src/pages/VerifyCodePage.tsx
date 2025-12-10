@@ -20,7 +20,7 @@ export const VerifyCodePage = () => {
     <div className="registration">
       <div className="registration__form-field">
         <input
-          type="text"
+          type="password"
           placeholder="Код подтверждения"
           {...register('code', {
             required: 'Обязательное поле',

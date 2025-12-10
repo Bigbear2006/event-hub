@@ -1,0 +1,12 @@
+@use 'variables';
+
+.theme {
+  padding: 10px;
+  background-color: variables.$card-color;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+}

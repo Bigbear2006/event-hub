@@ -2,6 +2,7 @@
 @use 'registration';
 @use 'events-list';
 @use 'event';
+@use 'theme';
 
 * {
   font-family: Inter, system-ui;
@@ -20,7 +21,6 @@ body,
   background-color: variables.$primary-color;
   box-sizing: border-box;
   margin: 0;
-  color-scheme: only dark;
 }
 
 #root {
@@ -32,7 +32,8 @@ p {
   color: variables.$secondary-color;
 }
 
-input[type='text'] {
+input[type='text'],
+input[type='password'] {
   color: variables.$secondary-color;
   border: none;
   border-radius: 10px;

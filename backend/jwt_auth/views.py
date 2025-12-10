@@ -56,7 +56,7 @@ class VerifyCodeAPIView(APIView):
 
         user.is_active = True
         user.save()
-        send_success_registration_email(user)
+        send_success_registration_email.delay(user.pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -69,7 +69,7 @@ class ForgotPasswordAPIView(APIView):
                 status.HTTP_404_NOT_FOUND,
             )
 
-        send_forgot_password_email(user)
+        send_forgot_password_email.delay(user.pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

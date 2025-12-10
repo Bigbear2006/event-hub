@@ -188,6 +188,9 @@ AUTH_USER_MODEL = 'jwt_auth.User'
 # Logging configuration
 # https://docs.djangoproject.com/en/5.2/ref/settings/#logging
 
+if not os.path.exists('logs'):
+    os.mkdir(BASE_DIR / 'logs')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -258,3 +261,14 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 24
+
+# Celery configuration options
+# https://docs.celeryq.dev/en/latest/django/first-steps-with-django.html
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
+
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
+
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = False

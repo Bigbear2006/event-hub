@@ -10,6 +10,4 @@ RUN pip install --no-cache-dir --upgrade pip \
     && uv pip install -e . --system --no-cache-dir
 
 COPY . .
-
 RUN chmod +x entrypoint.sh
-ENTRYPOINT ["sh", "entrypoint.sh"]

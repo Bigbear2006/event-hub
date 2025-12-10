@@ -1,5 +1,21 @@
-$primary-color: #0e0e0e;
-$secondary-color: #ffffff;
-$placeholder-color: #b0c9ff4d;
-$button-color: #246aff;
-$card-color: #b0c9ff4d;
+:root {
+  --color-primary: #0e0e0e;
+  --color-secondary: #ffffff;
+  --color-placeholder: #b0c9ff4d;
+  --color-button: #246aff;
+  --color-card: #b0c9ff4d;
+}
+
+[data-theme='light'] {
+  --color-primary: #ffffff;
+  --color-secondary: #0e0e0e;
+  --color-placeholder: #b0c9ff4d;
+  --color-button: #4d8dff;
+  --color-card: #94aeff;
+}
+
+$primary-color: var(--color-primary);
+$secondary-color: var(--color-secondary);
+$placeholder-color: var(--color-placeholder);
+$button-color: var(--color-button);
+$card-color: var(--color-card);

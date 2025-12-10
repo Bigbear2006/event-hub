@@ -1,7 +1,8 @@
 from typing import Any, cast
 
 from django.contrib import admin
-from django.db.models import QuerySet
+from django.db.models import ForeignKey, QuerySet
+from django.forms.models import ModelChoiceField
 from django.http import HttpRequest
 
 from api.models import Event, EventParticipation, Feedback
@@ -12,10 +13,27 @@ from jwt_auth.models import User
 class EventParticipationInline(admin.TabularInline[EventParticipation, Event]):
     model = EventParticipation
 
+    def get_queryset(
+        self,
+        request: HttpRequest,
+    ) -> QuerySet[EventParticipation]:
+        return super().get_queryset(request).filter(user__is_active=True)
+
+    def formfield_for_foreignkey(
+        self,
+        db_field: ForeignKey[Any],
+        request: HttpRequest,
+        **kwargs: Any,
+    ) -> ModelChoiceField[Any] | None:
+        if db_field.name == 'user':
+            kwargs['queryset'] = User.objects.filter(is_active=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 @admin.register(Event)
 class EventAdmin(admin.ModelAdmin[Event]):
     list_display = ('title', 'start_date', 'end_date', 'is_cancelled')
+    exclude = ('created_by',)
     search_fields = ('title', 'short_description', 'full_description')
     search_help_text = 'Поиск по названию, краткому и полному описанию'
     inlines = (EventParticipationInline,)
@@ -54,7 +72,7 @@ class EventAdmin(admin.ModelAdmin[Event]):
                 return
             for new_obj in formset.new_objects:
                 if isinstance(new_obj, EventParticipation):
-                    notify_user_about_event(event, new_obj.user)
+                    notify_user_about_event(event.pk, new_obj.user.pk)
 
 
 @admin.register(Feedback)

@@ -12,6 +12,7 @@ import {
   getEventStatusText,
 } from '../format.ts';
 import { toast } from 'react-toastify';
+import BackIcon from '../assets/back-icon.svg';
 
 export const EventPage = () => {
   const [event, setEvent] = useState<Event>({
@@ -36,8 +37,8 @@ export const EventPage = () => {
 
   return (
     <div className="event">
-      <div className="event__back" onClick={() => navigate('/events/active/')}>
-        <p>Назад</p>
+      <div className="event__back" onClick={() => navigate('/events/my/')}>
+        <img src={BackIcon} alt="" width="30" height="30" />
       </div>
       <div className="event__title">
         <p>{event.title}</p>
@@ -95,13 +96,13 @@ export const EventPage = () => {
                   );
                 }}
               >
-                Подтвердить
+                Да
               </button>
               <button
                 className="event__confirm-cancel"
                 onClick={() => setOpen(false)}
               >
-                Отмена
+                Нет
               </button>
             </div>
           </div>

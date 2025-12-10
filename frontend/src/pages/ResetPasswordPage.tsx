@@ -24,7 +24,7 @@ export const ResetPasswordPage = () => {
       <p>Придумайте новый пароль</p>
       <div className="registration__form-field">
         <input
-          type="text"
+          type="password"
           placeholder="Пароль"
           {...register('password', {
             required: 'Обязательное поле',
@@ -44,7 +44,7 @@ export const ResetPasswordPage = () => {
 
       <div className="registration__form-field">
         <input
-          type="text"
+          type="password"
           placeholder="Повторите пароль"
           {...register('repeat_password', {
             required: 'Обязательное поле',

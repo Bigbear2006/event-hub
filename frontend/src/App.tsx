@@ -8,11 +8,13 @@ import { ToastContainer } from 'react-toastify';
 import { ForgotPasswordPage } from './pages/ForgotPasswordPage.tsx';
 import { ResetPasswordPage } from './pages/ResetPasswordPage.tsx';
 import { VerifyCodePage } from './pages/VerifyCodePage.tsx';
+import { Theme } from './components/Theme.tsx';
 
 export const App = () => {
   return (
     <>
       <BrowserRouter>
+        <Theme />
         <Routes>
           <Route path="/" element={<RegistrationPage />} />
           <Route path="verify-code/" element={<VerifyCodePage />} />

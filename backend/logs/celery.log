@@ -1,0 +1,78 @@
+[2025-12-10 12:06:22,382: INFO/MainProcess] beat: Starting...
+[2025-12-10 12:06:23,372: INFO/MainProcess] Connected to redis://default:**@redis:6379/1
+[2025-12-10 12:06:23,378: INFO/MainProcess] mingle: searching for neighbors
+[2025-12-10 12:06:24,389: INFO/MainProcess] mingle: all alone
+[2025-12-10 12:06:24,410: INFO/MainProcess] celery@27a199861766 ready.
+[2025-12-10 12:06:24,418: INFO/MainProcess] Task jwt_auth.services.email.send_verification_code_email[e785431c-ec20-4406-acac-adec05e6e27a] received
+[2025-12-10 12:06:24,421: INFO/MainProcess] Task jwt_auth.services.email.send_verification_code_email[c049f946-0676-4d3b-8554-85dd29b79182] received
+[2025-12-10 12:06:24,467: ERROR/ForkPoolWorker-7] Task jwt_auth.services.email.send_verification_code_email[e785431c-ec20-4406-acac-adec05e6e27a] raised unexpected: DoesNotExist('User matching query does not exist.')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/site-packages/celery/app/trace.py", line 479, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/celery/app/trace.py", line 779, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/app/jwt_auth/services/email.py", line 12, in send_verification_code_email
+    user = User.objects.get(id=user_id)
+  File "/usr/local/lib/python3.13/site-packages/django/db/models/manager.py", line 87, in manager_method
+    return getattr(self.get_queryset(), name)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/django/db/models/query.py", line 639, in get
+    raise self.model.DoesNotExist(
+        "%s matching query does not exist." % self.model._meta.object_name
+    )
+jwt_auth.models.User.DoesNotExist: User matching query does not exist.
+[2025-12-10 12:06:27,159: INFO/ForkPoolWorker-8] Task jwt_auth.services.email.send_verification_code_email[c049f946-0676-4d3b-8554-85dd29b79182] succeeded in 2.7357147120055743s: None
+[2025-12-10 12:09:00,069: INFO/MainProcess] beat: Starting...
+[2025-12-10 12:09:01,628: INFO/MainProcess] Connected to redis://default:**@redis:6379/1
+[2025-12-10 12:09:01,636: INFO/MainProcess] mingle: searching for neighbors
+[2025-12-10 12:09:02,647: INFO/MainProcess] mingle: all alone
+[2025-12-10 12:09:02,667: INFO/MainProcess] celery@d04ba85270f0 ready.
+[2025-12-10 12:10:40,100: INFO/MainProcess] Task jwt_auth.services.email.send_verification_code_email[c14a5294-f6d0-4888-af4c-e8b89f76e92d] received
+[2025-12-10 12:10:43,232: INFO/ForkPoolWorker-7] Task jwt_auth.services.email.send_verification_code_email[c14a5294-f6d0-4888-af4c-e8b89f76e92d] succeeded in 3.1224278370063985s: None
+[2025-12-10 12:10:52,310: INFO/MainProcess] Task jwt_auth.services.email.send_success_registration_email[e806da4e-56fb-4004-9ff7-ce1e66d9f0f5] received
+[2025-12-10 12:10:55,425: INFO/ForkPoolWorker-7] Task jwt_auth.services.email.send_success_registration_email[e806da4e-56fb-4004-9ff7-ce1e66d9f0f5] succeeded in 3.1114183950121514s: None
+[2025-12-10 12:19:59,257: INFO/MainProcess] Task jwt_auth.services.email.send_forgot_password_email[c7bac19b-95d4-4ea4-9d45-46e19b486d10] received
+[2025-12-10 12:20:15,546: ERROR/ForkPoolWorker-7] Task jwt_auth.services.email.send_forgot_password_email[c7bac19b-95d4-4ea4-9d45-46e19b486d10] raised unexpected: SMTPServerDisconnected('Connection unexpectedly closed')
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.13/site-packages/celery/app/trace.py", line 479, in trace_task
+    R = retval = fun(*args, **kwargs)
+                 ~~~^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/celery/app/trace.py", line 779, in __protected_call__
+    return self.run(*args, **kwargs)
+           ~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/app/jwt_auth/services/email.py", line 38, in send_forgot_password_email
+    user.email_user('Смена пароля', '', html_message=msg)
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/django/contrib/auth/models.py", line 514, in email_user
+    send_mail(subject, message, from_email, [self.email], **kwargs)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/django/utils/deprecation.py", line 268, in wrapper
+    return func(*args, **kwargs)
+  File "/usr/local/lib/python3.13/site-packages/django/core/mail/__init__.py", line 108, in send_mail
+    return mail.send()
+           ~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/site-packages/django/core/mail/message.py", line 358, in send
+    return self.get_connection(fail_silently).send_messages([self])
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "/usr/local/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 130, in send_messages
+    new_conn_created = self.open()
+  File "/usr/local/lib/python3.13/site-packages/django/core/mail/backends/smtp.py", line 88, in open
+    self.connection = self.connection_class(
+                      ~~~~~~~~~~~~~~~~~~~~~^
+        self.host, self.port, **connection_params
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/usr/local/lib/python3.13/smtplib.py", line 264, in __init__
+    (code, msg) = self.connect(host, port)
+                  ~~~~~~~~~~~~^^^^^^^^^^^^
+  File "/usr/local/lib/python3.13/smtplib.py", line 352, in connect
+    (code, msg) = self.getreply()
+                  ~~~~~~~~~~~~~^^
+  File "/usr/local/lib/python3.13/smtplib.py", line 414, in getreply
+    raise SMTPServerDisconnected("Connection unexpectedly closed")
+smtplib.SMTPServerDisconnected: Connection unexpectedly closed
+[2025-12-10 12:20:38,820: INFO/MainProcess] Task jwt_auth.services.email.send_forgot_password_email[20b7061f-9f3b-4eff-9fdf-34832396bc93] received
+[2025-12-10 12:20:41,389: INFO/ForkPoolWorker-7] Task jwt_auth.services.email.send_forgot_password_email[20b7061f-9f3b-4eff-9fdf-34832396bc93] succeeded in 2.566906951004057s: None

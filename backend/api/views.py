@@ -78,7 +78,7 @@ class EventParticipationAPIView(APIView):
             user=request.user,
         )
         if created:
-            send_user_participated_email(event, request.user)
+            send_user_participated_email(event.pk, request.user.pk)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request: Request, pk: int) -> Response:
@@ -89,7 +89,7 @@ class EventParticipationAPIView(APIView):
         )
 
         if queryset.exists():
-            send_user_cancelled_participation_email(event, request.user)
+            send_user_cancelled_participation_email(event.pk, request.user.pk)
 
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
