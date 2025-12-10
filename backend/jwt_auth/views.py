@@ -4,7 +4,7 @@ from django.core.cache import cache
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -15,6 +15,7 @@ from jwt_auth.serializers import UserSerializer
 from jwt_auth.services import (
     send_forgot_password_email,
     send_success_registration_email,
+    send_verification_code_email,
     validate_token,
 )
 
@@ -35,6 +36,18 @@ class UserInfoAPIView(RetrieveAPIView[User]):
         return cast(User, self.request.user)
 
 
+class SendVerificationCodeAPIView(APIView):
+    def post(self, request: Request) -> Response:
+        user_id = request.query_params.get('user_id', '')
+        user = get_object_or_404(User, pk=user_id)
+        if not cache.get(f'{user.pk}:code_sent'):
+            cache.delete(f'{user.pk}:code')
+            send_verification_code_email.delay(user.pk)
+            cache.set(f'{user.pk}:code_sent', True, timeout=10)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 class VerifyCodeAPIView(APIView):
     def post(self, request: Request) -> Response:
         code = request.data.get('code', '')
@@ -47,7 +60,7 @@ class VerifyCodeAPIView(APIView):
             )
 
         user = User.objects.get(pk=user_id)
-        cached_code = cache.get(f'{user.email}:code')
+        cached_code = cache.get(f'{user.pk}:code')
         if not cached_code or cached_code != int(code):
             return Response(
                 {'error': 'code is invalid'},

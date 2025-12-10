@@ -7,11 +7,12 @@ from django.core.cache import cache
 from backend.celery import app
 from jwt_auth.models import User
 
+
 @app.task
 def send_verification_code_email(user_id: int) -> None:
     user = User.objects.get(id=user_id)
     code = random.randint(1000, 9999)
-    cache.set(f'{user.email}:code', code, timeout=300)
+    cache.set(f'{user.pk}:code', code, timeout=300)
     msg = f'Ваш код подтверждения: {code}'
     user.email_user('Активация аккаунта', '', html_message=msg)
 

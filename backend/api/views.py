@@ -1,5 +1,6 @@
 from typing import cast
 
+from django.core.cache import cache
 from django.db.models import QuerySet
 from django.db.models.aggregates import Count
 from django.utils.timezone import now
@@ -73,12 +74,26 @@ class EventParticipationAPIView(APIView):
                 status.HTTP_400_BAD_REQUEST,
             )
 
+        if (
+            cache.get(f'participation:{request.user.pk}:{event.pk}')
+            is not None
+        ):
+            return Response(
+                {'error': 'too many requests'},
+                status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+
         _, created = EventParticipation.objects.get_or_create(
             event=event,
             user=request.user,
         )
         if created:
-            send_user_participated_email(event.pk, request.user.pk)
+            cache.set(
+                f'participation:{request.user.pk}:{event.pk}',
+                True,
+                timeout=60,
+            )
+            send_user_participated_email.delay(event.pk, request.user.pk)  # type: ignore
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def delete(self, request: Request, pk: int) -> Response:
@@ -89,7 +104,10 @@ class EventParticipationAPIView(APIView):
         )
 
         if queryset.exists():
-            send_user_cancelled_participation_email(event.pk, request.user.pk)
+            send_user_cancelled_participation_email.delay(
+                event.pk,
+                request.user.pk,
+            )
 
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

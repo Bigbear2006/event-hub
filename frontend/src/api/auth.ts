@@ -50,12 +50,12 @@ export interface VerifyCodeData {
   code: number;
 }
 
-export const verifyCode = (data: VerifyCodeData) => {
-  return axiosInstance.post('api/auth/user/verify-code/', data);
+export const sendVerificationCode = (userId: number) => {
+  return axiosInstance.post(`api/auth/user/send-verification-code/`, {}, {params: {user_id: userId}});
 };
 
-export const loginAsAdmin = () => {
-  return axiosInstance.post('api/auth/user/login-as-admin/');
+export const verifyCode = (data: VerifyCodeData) => {
+  return axiosInstance.post('api/auth/user/verify-code/', data);
 };
 
 interface RefreshAccessTokenResponse {

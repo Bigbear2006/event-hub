@@ -16,6 +16,11 @@ urlpatterns = [
         name='register-user',
     ),
     path(
+        'user/send-verification-code/',
+        views.SendVerificationCodeAPIView.as_view(),
+        name='send-verification-code',
+    ),
+    path(
         'user/verify-code/',
         views.VerifyCodeAPIView.as_view(),
         name='verify-code',

@@ -13,3 +13,8 @@ backend/db.sqlite3
 README.md
 .github
 build
+logs
+
+celerybeat-schedule
+celerybeat-schedule-shm
+celerybeat-schedule-wal

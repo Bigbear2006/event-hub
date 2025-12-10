@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { verifyCode } from '../api/auth.ts';
+import { sendVerificationCode, verifyCode } from '../api/auth.ts';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -45,6 +45,19 @@ export const VerifyCodePage = () => {
       >
         Зарегистрироваться
       </button>
+      <p
+        onClick={() =>
+          sendVerificationCode(+params.get('user_id')!).then(
+            () => toast.info('Код отправлен ещё раз'),
+            () =>
+              toast.error(
+                'Код нельзя запрашивать так часто. Подождите и попробуйте еще раз',
+              ),
+          )
+        }
+      >
+        Код не пришел, запросить ещё раз
+      </p>
       <a href="/login">Уже есть аккаунт</a>
     </div>
   );

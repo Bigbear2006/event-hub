@@ -76,7 +76,13 @@ export const EventPage = () => {
           onClick={() => {
             participateInEvent(event.id).then(
               () => getEvent(event.id, setEvent),
-              () => toast.error('Достигнут максимальный лимит участников'),
+              error =>
+                toast.error(
+                  error.response.status === 429
+                    ? 'Вы только что приняли участие в этом событии, и затем отменили его. ' +
+                        'Попробуйте еще раз через минуту'
+                    : 'Достигнут максимальный лимит участников',
+                ),
             );
           }}
         >
