@@ -95,3 +95,24 @@ export const resetPassword = (data: ResetPasswordData) => {
     { params: { user_id: data.userId, token: data.token } },
   );
 };
+
+
+interface UserResponse {
+  username: string;
+  email: string;
+  is_staff: boolean
+}
+
+export interface User {
+  username: string;
+  email: string;
+  isStaff: boolean
+}
+
+export const getUser = (callback: (user: User) => any) => {
+  axiosInstance.get<UserResponse>('api/auth/user/').then(
+    rsp => {
+      callback({username: rsp.data.username, email: rsp.data.email, isStaff: rsp.data.is_staff})
+    }
+  )
+}

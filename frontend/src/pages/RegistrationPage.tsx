@@ -3,8 +3,10 @@ import { z } from 'zod';
 import { registerUser, type RegisterUserData } from '../api/auth.ts';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useEffect, useState } from 'react';
 
 export const RegistrationPage = () => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   const {
     register,
     watch,
@@ -13,6 +15,17 @@ export const RegistrationPage = () => {
   } = useForm<RegisterUserData>();
   const password = watch('password');
   const navigate = useNavigate();
+
+  const acceptCookies = (value: string) => {
+    setModalIsOpen(false);
+    localStorage.setItem('cookies-agreement', value);
+  };
+
+  useEffect(() => {
+    if (!localStorage.getItem('cookies-agreement')) {
+      setModalIsOpen(true);
+    }
+  }, []);
 
   return (
     <div className="registration">
@@ -98,6 +111,25 @@ export const RegistrationPage = () => {
         Зарегистрироваться
       </button>
       <a href="/login">Уже есть аккаунт</a>
+      {modalIsOpen && (
+        <div className="modal-overlay">
+          <div className="modal cookies-modal">
+            <p>
+              Посещая этот сайт, вы соглашаетесь с нашей{' '}
+              <a href="/privacy-policy/" target="_blank">
+                политикой конфиденциальности
+              </a>
+              {' '}и соглашаетесь с использованием Cookie
+            </p>
+            <div className="modal-actions">
+              <button onClick={() => acceptCookies('all')}>Принять все</button>
+              <button onClick={() => acceptCookies('necessary')}>
+                Только необходимые
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

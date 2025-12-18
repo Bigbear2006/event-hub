@@ -46,13 +46,13 @@ class Event(models.Model):
         super().clean()
         today = now()
 
-        # if not self.pk and self.start_date < today:
-        #     raise ValidationError(
-        #         {
-        #             'start_date': 'Дата начала должна быть позже '
-        #             'сегодняшней даты',
-        #         },
-        #     )
+        if not self.pk and self.start_date < today:
+            raise ValidationError(
+                {
+                    'start_date': 'Дата начала должна быть позже '
+                    'сегодняшней даты',
+                },
+            )
 
         if (
             self.pk

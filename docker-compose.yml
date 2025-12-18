@@ -26,14 +26,13 @@ services:
 
   backend:
     build:
-      context: backend
-    entrypoint: /app/entrypoint.sh
+      context: node-backend
     ports:
       - "8000:8000"
     env_file:
-      - .env
+      - node-backend/.env
     volumes:
-      - ./backend:/app
+      - ./node-backend:/app
     depends_on:
       - db
 

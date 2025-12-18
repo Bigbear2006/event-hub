@@ -74,3 +74,29 @@ export const participateInEvent = (eventId: number) => {
 export const cancelEventParticipation = (eventId: number) => {
   return axiosInstance.delete(`api/events/${eventId}/participate/`);
 };
+
+export interface CreateEventData {
+  title: string;
+  image: string;
+  shortDescription?: string;
+  fullDescription: string;
+  startDate: string;
+  endDate: string;
+  paymentInfo?: string;
+  maxParticipantsCount?: number;
+}
+
+export const createEvent = async (data: CreateEventData) => {
+  axiosInstance
+    .post('/api/events/', {
+      title: data.title,
+      image: data.image,
+      short_description: data.shortDescription,
+      full_description: data.fullDescription,
+      start_date: data.startDate,
+      end_date: data.endDate,
+      payment_info: data.paymentInfo,
+      max_participants_count: data.maxParticipantsCount,
+    })
+    .then(console.log);
+};

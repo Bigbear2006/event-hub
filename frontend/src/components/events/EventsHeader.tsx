@@ -1,12 +1,21 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import type {User} from "../../api/auth.ts";
 
-export const EventsHeader = () => {
+interface EventsHeaderProps {
+  user: User;
+}
+
+export const EventsHeader = ({user}: EventsHeaderProps) => {
   const items = [
     { title: 'Активные события', path: '/events/active' },
     { title: 'Мои события', path: '/events/my' },
     { title: 'Прошедшие события', path: '/events/past' },
   ];
+  if (user.isStaff) {
+    items.push({ title: 'Добавить событие', path: '/event/create' })
+  }
+
   const [currentItem, setCurrentItem] = useState<number>(1);
   const navigate = useNavigate();
 

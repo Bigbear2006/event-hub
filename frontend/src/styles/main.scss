@@ -4,6 +4,7 @@
 @use 'event';
 @use 'theme';
 @use 'feedback';
+@use 'privacy-policy';
 
 * {
   font-family: Inter, system-ui;
@@ -35,6 +36,8 @@ p {
 
 input[type='text'],
 input[type='password'],
+input[type='datetime-local'],
+input[type='number'],
 textarea {
   color: variables.$secondary-color;
   border: none;
@@ -82,4 +85,59 @@ button:not(.Toastify__close-button) {
   width: 100%;
   max-width: 300px;
   box-sizing: border-box;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  width: 100%;
+  max-width: 300px;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    align-items: flex-start;
+  }
+}
+
+.back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: variables.$card-color;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: variables.$primary-color;
+  padding: 16px 20px;
+  border-radius: 8px;
+  min-width: 280px;
+  text-align: center;
+  border: 1px solid variables.$secondary-color;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
 }

@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             Int                  @id @default(autoincrement())
+  username       String               @map("username")
+  email          String               @unique @map("email")
+  password       String               @unique @map("password")
+  isActive       Boolean              @default(false) @map("is_active")
+  isStaff        Boolean              @default(false) @map("is_staff")
+  isSuperuser    Boolean              @default(false) @map("is_superuser")
+  createdEvents  Event[]
+  participations EventParticipation[]
+  feedbacks      Feedback[]
+
+  @@map("jwt_auth_user")
+}
+
+model Event {
+  id                   Int                 @id @default(autoincrement()) @map("id")
+  title                String              @map("title")
+  image                String              @map("image")
+  shortDescription     String?             @map("short_description")
+  fullDescription      String              @map("full_description")
+  startDate            DateTime            @map("start_date")
+  endDate              DateTime            @map("end_date")
+  paymentInfo          String?             @map("payment_info")
+  maxParticipantsCount Int?                @map("max_participants_count")
+  isCancelled          Boolean             @default(false) @map("is_cancelled")
+  createdAt            DateTime            @default(now()) @map("created_at")
+
+  createdBy      User?                @relation(fields: [createdById], references: [id])
+  createdById    Int?                 @map("created_by_id")
+  participations EventParticipation[]
+
+  @@map("api_event")
+}
+
+model EventParticipation {
+  id        Int      @id @default(autoincrement()) @map("id")
+  userId    Int      @map("user_id")
+  eventId   Int      @map("event_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user       User      @relation(fields: [userId], references: [id])
+  event      Event     @relation(fields: [eventId], references: [id])
+  feedback   Feedback?
+
+  @@unique([userId, eventId])
+  @@map("api_eventparticipation")
+}
+
+model Feedback {
+  id              Int      @id @default(autoincrement()) @map("id")
+  participationId Int      @unique @map("participation_id")
+  text            String?  @map("text")
+  rating          Int      @map("rating")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  participation EventParticipation @relation(fields: [participationId], references: [id])
+  user          User?              @relation(fields: [userId], references: [id])
+  userId        Int?               @map("user_id")
+
+  @@map("api_feedback")
+}

@@ -12,7 +12,7 @@ import {
   getEventStatusText,
 } from '../format.ts';
 import { toast } from 'react-toastify';
-import BackIcon from '../assets/back-icon.svg';
+import { Back } from '../components/Back.tsx';
 
 export const EventPage = () => {
   const [event, setEvent] = useState<Event>({
@@ -37,31 +37,35 @@ export const EventPage = () => {
 
   return (
     <div className="event">
-      <div className="event__back" onClick={() => navigate('/events/my/')}>
-        <img src={BackIcon} alt="" width="30" height="30" />
-      </div>
+      <Back navigateTo={'/events/my/'} />
       <div className="event__title">
         <p>{event.title}</p>
       </div>
       <div className="event__body">
         <img src={event.image} alt="" />
-        <div>
+        <div className="event__block">
           <p>Описание</p>
           <p>{event.fullDescription}</p>
         </div>
       </div>
-      <p>Информация об оплате: {event.paymentInfo}</p>
-      <p>
-        Мероприятие проводится с {formatDate(event.startDate)} по{' '}
-        {formatDate(event.endDate)}
-      </p>
-      <p>
-        {event.userParticipated
-          ? 'Вы участвуете в этом мероприятии'
-          : 'Вы не участвуете в этом мероприятии'}
-      </p>
-      <p>{getEventParticipantsCountText(event)}</p>
-      <p>Статус: {getEventStatusText(event)}</p>
+      <div className="event__block">
+        <p className="event__block-title">Информация об оплате</p>
+        <p>Информация об оплате: {event.paymentInfo}</p>
+      </div>
+      <div className="event__block">
+        <p className="event__block-title">Мероприятие проводится</p>
+        <p>
+          {formatDate(event.startDate)} по {formatDate(event.endDate)} (
+          {getEventStatusText(event)})
+        </p>
+        <p>
+          {event.userParticipated
+            ? 'Вы участвуете в этом мероприятии'
+            : 'Вы не участвуете в этом мероприятии'}
+        </p>
+
+        <p>{getEventParticipantsCountText(event)}</p>
+      </div>
       {event.isActive && event.userParticipated && (
         <button
           onClick={() => {
@@ -89,11 +93,16 @@ export const EventPage = () => {
           Подтвердить участие
         </button>
       )}
+      {!event.isActive && event.userParticipated && (
+        <button onClick={() => navigate(`/event/${id}/feedback/create/`)}>
+          Оставить отзыв
+        </button>
+      )}
       {open && (
-        <div className="event__modal-overlay">
-          <div className="event__modal">
+        <div className="modal-overlay">
+          <div className="modal">
             <p>Вы уверены, что хотите отменить участие?</p>
-            <div className="event__modal-actions">
+            <div className="modal-actions">
               <button
                 onClick={() => {
                   setOpen(false);
@@ -104,12 +113,7 @@ export const EventPage = () => {
               >
                 Да
               </button>
-              <button
-                className="event__confirm-cancel"
-                onClick={() => setOpen(false)}
-              >
-                Нет
-              </button>
+              <button onClick={() => setOpen(false)}>Нет</button>
             </div>
           </div>
         </div>

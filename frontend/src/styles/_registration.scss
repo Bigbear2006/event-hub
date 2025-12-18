@@ -6,12 +6,21 @@
   gap: 16px;
   padding: 20px;
   width: 100%;
+  max-width: 300px;
 
   &__form-field {
     display: flex;
     flex-direction: column;
     gap: 8px;
     width: 100%;
-    align-items: center;
+    align-items: flex-start;
+  }
+
+  .cookies-modal {
+    max-width: 300px;
+
+    button {
+      height: 50px;
+    }
   }
 }
